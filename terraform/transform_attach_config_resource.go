@@ -19,8 +19,8 @@ type GraphNodeAttachResourceConfig interface {
 }
 
 // AttachResourceConfigTransformer goes through the graph and attaches
-// resource configuration structures to nodes that implement the interfaces
-// above.
+// resource configuration structures to nodes that implement
+// GraphNodeAttachManagedResourceConfig or GraphNodeAttachDataResourceConfig.
 //
 // The attached configuration structures are directly from the configuration.
 // If they're going to be modified, a copy should be made.

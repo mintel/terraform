@@ -1,7 +1,7 @@
 package terraform
 
 import (
-	"github.com/hashicorp/terraform/config/module"
+	"github.com/hashicorp/terraform/configs"
 	"github.com/hashicorp/terraform/dag"
 )
 
@@ -13,8 +13,8 @@ import (
 // that aren't explicitly in the diff. There are other scenarios where the
 // diff can be deviated, so this is just one layer of protection.
 type ApplyGraphBuilder struct {
-	// Module is the root module for the graph to build.
-	Module *module.Tree
+	// Config is the configuration tree that the diff was built from.
+	Config *configs.Config
 
 	// Diff is the diff to apply.
 	Diff *Diff
@@ -72,14 +72,11 @@ func (b *ApplyGraphBuilder) Steps() []GraphTransformer {
 		// Creates all the nodes represented in the diff.
 		&DiffTransformer{
 			Concrete: concreteResource,
-
-			Diff:   b.Diff,
-			Module: b.Module,
-			State:  b.State,
+			Diff:     b.Diff,
 		},
 
 		// Create orphan output nodes
-		&OrphanOutputTransformer{Module: b.Module, State: b.State},
+		&OrphanOutputTransformer{Config: b.Config, State: b.State},
 
 		// Attach the configuration to any resources
 		&AttachResourceConfigTransformer{Module: b.Module},
